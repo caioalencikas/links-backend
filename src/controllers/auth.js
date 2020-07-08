@@ -16,7 +16,9 @@ const {
 
 const {
     generateJwt,
-    generateRefreshJwt
+    generateRefreshJwt,
+    verifyRefreshJwt,
+    getTokenFromHeaders
 } = require('../helpers/jwt')
 
 const router = express.Router()
@@ -92,6 +94,35 @@ router.post('/sign-up', accountSignUp, async (req, res) => {
         token,
         refreshToken
     })
+})
+
+router.post('/refresh', async (req, res) => {
+    const token = getTokenFromHeaders(req.headers)
+
+    if (!token) {
+        return res.jsonUnauthorized(null, 'Invalid token')
+    }
+
+    try {
+        const decoded = verifyRefreshJwt(token)
+        const account = await Account.findByPk(decoded.id)
+        if (!account) return res.jsonUnauthorized(null, 'Invalid token')
+
+        if (decoded.version != account.jwtVersion) {
+            return res.jsonUnauthorized(null, 'Invalid token')
+        }
+
+        const meta = {
+            token: generateJwt({
+                id: account.id
+            })
+        }
+
+        return res.jsonOK(null, null, meta)
+
+    } catch (error) {
+        return res.jsonUnauthorized(null, 'Invalid token')
+    }
 })
 
 module.exports = router
