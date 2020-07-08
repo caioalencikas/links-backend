@@ -8,7 +8,9 @@ const {
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-    const accountId = 1 ///req.id
+    const {
+        accountId
+    } = req
     const links = await Link.findAll({
         where: {
             accountId
@@ -19,7 +21,10 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-    const accountId = 1 ///req.id
+    const {
+        accountId
+    } = req
+    
     const {
         id
     } = req.params
@@ -39,13 +44,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
-    const accountId = 1 ///req.id
+    const {
+        accountId,
+        body
+    } = req
 
     const {
         label,
         url,
         isSocial
-    } = req.body
+    } = body
 
     const image = 'https://google.com/image.jpg'
 
@@ -61,14 +69,10 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-    const accountId = 1 ///req.id
+    const { accountId, body } = req
     const {
         id
     } = req.params
-
-    const {
-        body
-    } = req
 
     const fields = ['label', 'url', 'isSocial']
 
@@ -92,7 +96,10 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    const accountId = 2 ///req.id
+    const {
+        accountId
+    } = req
+
     const {
         id
     } = req.params
